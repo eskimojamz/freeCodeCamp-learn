@@ -1,4 +1,3 @@
-// Create an array of objects which hold the denominations and their values
 var denominations = [
   { name: "ONE HUNDRED", val: 100.00 },
   { name: "TWENTY", val: 20.00 },
@@ -12,7 +11,7 @@ var denominations = [
 ];
 
 function checkCashRegister(price, cash, cid) {
-  
+  var output = { status: null, change: [] }
   var change = cash - price
 
   var totalCID = cid.reduce(function(acc, next){
@@ -20,9 +19,12 @@ function checkCashRegister(price, cash, cid) {
   }, 0.0)
 
   if (totalCID < change) {
-    return "INSUFFICIENT_FUNDS"
+    output.status = "INSUFFICIENT_FUNDS"
+    return output
   } else if (totalCID === change) {
-    return "CLOSED"
+    output.status = "CLOSED"
+    output.change = cid
+    return output
   }
 
   cid = cid.reverse()
@@ -42,8 +44,16 @@ function checkCashRegister(price, cash, cid) {
       return acc
     }
   }, [])
-  console.log(result)
-  return result.length > 0 && change === 0 ? result : "INSUFFICIENT FUNDS"
+  
+  if (result.length < 1 || change > 0) {
+    output.status = "INSUFFICIENT_FUNDS";
+    return output
+  }
+  
+  output.status = "OPEN";
+  output.change = result;
+  
+  return output
 }
 
-console.log(checkCashRegister(19.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]))
+console.log(checkCashRegister(19.5, 20, [["PENNY", 0.5], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]]))
